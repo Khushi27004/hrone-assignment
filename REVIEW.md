@@ -2,9 +2,9 @@
 
 Line numbers refer to the original starter `app/main.py`.
 
-| # | Where (function / line) | What is wrong | How I notice it (test, input, or symptom) | How I fixed it |
-|---|---|---|---|---|
-| 1 | `MongoClient(...)`, L22 | No `tz_aware=True`, so PyMongo returns naive datetimes. Subtracting them from time-zone-aware values raises `TypeError`, and naive values are silently read as local time. | A stored punch minus an IST-aware shift time gives a 500. `doc["punch_in"].tzinfo` is `None`. | `tz_aware=True`. Instants are UTC everywhere and converted to IST only for the date and shift rules. |
+| #   | Where (function / line) | What is wrong                                                                                                                                                              | How I notice it (test, input, or symptom)                                                     | How I fixed it                                                                                       |
+| --- | ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| 1   | `MongoClient(...)`, L22 | No `tz_aware=True`, so PyMongo returns naive datetimes. Subtracting them from time-zone-aware values raises `TypeError`, and naive values are silently read as local time. | A stored punch minus an IST-aware shift time gives a 500. `doc["punch_in"].tzinfo` is `None`. | `tz_aware=True`. Instants are UTC everywhere and converted to IST only for the date and shift rules. |
 
 | 2 | L22-23 | Hard-coded fallback URI and database name. No server-selection timeout, so the default is 30 s. | Stop MongoDB: every request hangs about 30 s. | `os.environ[...]` with no fallback, and `serverSelectionTimeoutMS=5000`. |
 
